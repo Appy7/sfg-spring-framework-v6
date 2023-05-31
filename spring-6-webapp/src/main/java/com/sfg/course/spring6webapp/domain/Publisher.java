@@ -1,9 +1,6 @@
 package com.sfg.course.spring6webapp.domain;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import java.util.Set;
 
@@ -14,10 +11,11 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 
 @Entity
-@Getter
-@Setter
-@ToString
-@EqualsAndHashCode
+@Data
+//@Getter
+//@Setter
+//@ToString
+//@EqualsAndHashCode
 public class Publisher {
 
     @Id

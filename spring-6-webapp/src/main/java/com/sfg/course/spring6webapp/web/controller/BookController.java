@@ -21,6 +21,7 @@ public class BookController {
 
     @GetMapping("/sfgv6/books")
     public ResponseEntity<List<Book>> getBooks() {
+
         return new ResponseEntity<>(bookService.findAll(), HttpStatus.OK);
     }
 

@@ -23,4 +23,9 @@ public class AuthorController {
     public ResponseEntity<List<Author>> getAuthors() {
         return new ResponseEntity<>(authorService.findAll(), HttpStatus.OK);
     }
+
+    public String check(){
+        System.out.println("Inside author controller");
+        return"aparna";
+    }
 }
