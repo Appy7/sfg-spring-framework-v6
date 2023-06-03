@@ -10,8 +10,11 @@ import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 //import org.assertj.core.api.Assertions;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -93,9 +96,26 @@ class BeerControllerTest {
                 .andExpect(header().exists("location"));
          }
 
-         @Test
+    @Test
+    void testCreateBeerValidation() throws Exception {
+        BeerDTO beerDTO=BeerDTO.builder().build();
+
+        given(beerService.saveBeer(any(BeerDTO.class))).willReturn(beerServiceImpl.getListOfBeers().get(0));
+
+       MvcResult mvcResult= mockMvc.perform(post(BeerController.BEER_PATH)
+                        .accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(beerDTO)))
+                .andExpect(status().isBadRequest())
+               .andExpect(jsonPath("$.length()",is(6))).andReturn();
+
+       System.out.println(mvcResult.getResponse().getContentAsString());
+    }
+
+    @Test
          void testUpdateBeerByID() throws Exception {
          BeerDTO beer= beerServiceImpl.getListOfBeers().get(1);
+
+         given(beerService.updateBeer(any(),any())).willReturn(Optional.of(beer));
 
          mockMvc.perform(put(BeerController.BEER_PATH_WITH_ID,beer.getId())
                  .accept(MediaType.APPLICATION_JSON)
@@ -106,9 +126,31 @@ class BeerControllerTest {
          verify(beerService).updateBeer(any(UUID.class),any(BeerDTO.class));
          }
 
+    @Test
+    void testUpdateBeerByIDBlankAndNull() throws Exception {
+        BeerDTO beer= beerServiceImpl.getListOfBeers().get(1);
+        //update by setting empty string
+        beer.setBeerName("");
+
+        given(beerService.updateBeer(any(),any())).willReturn(Optional.of(beer));
+
+      MvcResult mvcResult=  mockMvc.perform(put(BeerController.BEER_PATH_WITH_ID,beer.getId())
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(beer)))
+                .andExpect(status().isBadRequest())
+                        .andExpect(jsonPath("$.length()",is(1)))
+              .andReturn();
+        System.out.println(((MvcResult) mvcResult).getResponse().getContentAsString());
+
+    }
+
          @Test
         void testDeleteById() throws Exception {
             BeerDTO beer=beerServiceImpl.getListOfBeers().get(1);
+
+            given(beerService.deleteBeer(any())).willReturn(true);
+
             mockMvc.perform(delete(BeerController.BEER_PATH_WITH_ID,beer.getId())
                     .accept(MediaType.APPLICATION_JSON))
                     .andExpect(status().isNoContent());
