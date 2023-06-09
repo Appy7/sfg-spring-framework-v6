@@ -1,19 +1,18 @@
 package com.sfg.course.spring6webapp.Controller;
 
-import com.sfg.course.spring6webapp.beer.BeerDTO;
-import com.sfg.course.spring6webapp.beerservice.BeerService;
+import com.sfg.course.spring6webapp.model.BeerDTO;
+import com.sfg.course.spring6webapp.service.BeerService;
+import com.sfg.course.spring6webapp.model.BeerStyle;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.UUID;
-
-import static org.apache.logging.log4j.ThreadContext.isEmpty;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -28,8 +27,13 @@ public class BeerController {
 
 
     @GetMapping(BEER_PATH)
-    public List<BeerDTO> getBeers(){
-        return beerService.getListOfBeers();
+    public Page<BeerDTO> getBeers(@RequestParam(required = false) String beerName,
+                                  @RequestParam(required = false) BeerStyle beerStyle,
+                                  @RequestParam(required = false) Boolean showInventory,
+                                  @RequestParam(required = false) Integer pageNumber,
+                                  @RequestParam(required = false) Integer pageSize){
+
+        return beerService.getListOfBeers(beerName,beerStyle, showInventory,pageNumber,pageSize);
     }
     @GetMapping(BEER_PATH_WITH_ID)
     public BeerDTO getBeerByIdInController(@PathVariable("beerId") UUID id){

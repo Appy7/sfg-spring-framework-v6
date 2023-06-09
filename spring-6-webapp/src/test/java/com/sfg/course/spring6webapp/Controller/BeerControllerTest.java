@@ -1,17 +1,15 @@
 package com.sfg.course.spring6webapp.Controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sfg.course.spring6webapp.beer.BeerDTO;
-import com.sfg.course.spring6webapp.beerservice.BeerService;
-import com.sfg.course.spring6webapp.beerservice.BeerServiceImpl;
+import com.sfg.course.spring6webapp.model.BeerDTO;
+import com.sfg.course.spring6webapp.service.BeerService;
+import com.sfg.course.spring6webapp.service.BeerServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -56,7 +54,7 @@ class BeerControllerTest {
     @Test
     void getBeerByIdInController() throws Exception {
 
-        BeerDTO beer=beerServiceImpl.getListOfBeers().get(0);
+        BeerDTO beer=beerServiceImpl.getListOfBeers(null, null, false, 1,25 ).getContent().get(0);
 
         given(beerService.getBeerById(beer.getId())).willReturn(Optional.of(beer));
 
@@ -70,23 +68,23 @@ class BeerControllerTest {
     @Test
     void testListOfBeers() throws Exception {
 
-        given(beerService.getListOfBeers()).willReturn(beerServiceImpl.getListOfBeers());
+        given(beerService.getListOfBeers(any(), any(), any(), any(),any() )).willReturn(beerServiceImpl.getListOfBeers(null, null, false, 1,25 ));
 
         mockMvc.perform(get(BeerController.BEER_PATH).accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.length()",is(3)));
+                .andExpect(jsonPath("$.content.length()",is(3)));
     }
     @Test
     void testCreateBeer() throws Exception {
         //String jsonObject=objectMapper.writeValueAsString(beer);
         //System.out.println(jsonObject);
 
-        BeerDTO beer= beerServiceImpl.getListOfBeers().get(0);
+        BeerDTO beer= beerServiceImpl.getListOfBeers(null, null, false, 1,25 ).getContent().get(0);
         beer.setVersion(null);
         beer.setId(null);
 
-        given(beerService.saveBeer(any(BeerDTO.class))).willReturn(beerServiceImpl.getListOfBeers().get(1));
+        given(beerService.saveBeer(any(BeerDTO.class))).willReturn(beerServiceImpl.getListOfBeers(null, null, false,1 ,25 ).getContent().get(1));
 
         mockMvc.perform(post(BeerController.BEER_PATH)
                 .accept(MediaType.APPLICATION_JSON)
@@ -100,7 +98,7 @@ class BeerControllerTest {
     void testCreateBeerValidation() throws Exception {
         BeerDTO beerDTO=BeerDTO.builder().build();
 
-        given(beerService.saveBeer(any(BeerDTO.class))).willReturn(beerServiceImpl.getListOfBeers().get(0));
+        given(beerService.saveBeer(any(BeerDTO.class))).willReturn(beerServiceImpl.getListOfBeers(null, null, false, 1, 25).getContent().get(0));
 
        MvcResult mvcResult= mockMvc.perform(post(BeerController.BEER_PATH)
                         .accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON)
@@ -113,7 +111,7 @@ class BeerControllerTest {
 
     @Test
          void testUpdateBeerByID() throws Exception {
-         BeerDTO beer= beerServiceImpl.getListOfBeers().get(1);
+         BeerDTO beer= beerServiceImpl.getListOfBeers(null, null, false, 1,25 ).getContent().get(1);
 
          given(beerService.updateBeer(any(),any())).willReturn(Optional.of(beer));
 
@@ -128,7 +126,7 @@ class BeerControllerTest {
 
     @Test
     void testUpdateBeerByIDBlankAndNull() throws Exception {
-        BeerDTO beer= beerServiceImpl.getListOfBeers().get(1);
+        BeerDTO beer= beerServiceImpl.getListOfBeers(null, null, false, 1,25 ).getContent().get(1);
         //update by setting empty string
         beer.setBeerName("");
 
@@ -147,7 +145,7 @@ class BeerControllerTest {
 
          @Test
         void testDeleteById() throws Exception {
-            BeerDTO beer=beerServiceImpl.getListOfBeers().get(1);
+            BeerDTO beer=beerServiceImpl.getListOfBeers(null, null, false, 1,25 ).getContent().get(1);
 
             given(beerService.deleteBeer(any())).willReturn(true);
 

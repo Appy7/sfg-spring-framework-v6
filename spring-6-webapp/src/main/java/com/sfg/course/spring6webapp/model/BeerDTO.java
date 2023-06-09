@@ -1,4 +1,4 @@
-package com.sfg.course.spring6webapp.beer;
+package com.sfg.course.spring6webapp.model;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

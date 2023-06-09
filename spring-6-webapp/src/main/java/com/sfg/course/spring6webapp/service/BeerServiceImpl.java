@@ -1,8 +1,10 @@
-package com.sfg.course.spring6webapp.beerservice;
+package com.sfg.course.spring6webapp.service;
 
-import com.sfg.course.spring6webapp.beer.BeerDTO;
-import com.sfg.course.spring6webapp.beer.BeerStyle;
+import com.sfg.course.spring6webapp.model.BeerDTO;
+import com.sfg.course.spring6webapp.model.BeerStyle;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -55,8 +57,8 @@ public class BeerServiceImpl implements BeerService {
 
     }
     @Override
-    public List<BeerDTO> getListOfBeers(){
-      return new ArrayList<>(beerMap.values());
+    public Page<BeerDTO> getListOfBeers(String beerName, BeerStyle beerStyle, Boolean showInventory, Integer pageNumber, Integer pageSize){
+      return new PageImpl<>(new ArrayList<>(beerMap.values()));
 
 }
     @Override

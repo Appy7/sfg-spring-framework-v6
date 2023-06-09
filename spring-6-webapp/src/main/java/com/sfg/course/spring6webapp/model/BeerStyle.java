@@ -1,4 +1,4 @@
-package com.sfg.course.spring6webapp.beer;
+package com.sfg.course.spring6webapp.model;
 
 public enum BeerStyle {
     LAGER,
